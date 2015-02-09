@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<script type="text/javascript">
+			var variables = [
+				{ label: 'false',     value: false          },
+				{ label: 'true',      value: true           },
+				{ label: '0',         value: 0              },
+				{ label: '1',         value: 1              },
+				{ label: 'Infinity',  value: Infinity       },
+				{ label: '"A"',       value: "A"            },
+				{ label: 'NaN',       value: NaN            },
+				{ label: 'null',      value: null           },
+				{ label: 'undefined', value: undefined      },
+				{ label: '{}',        value: {}             },
+				{ label: '[]',        value: []             },
+				{ label: 'function',  value: function () {} }
+			];
+
+			var dataTypes = [
+				{ color:'rgb(180,220,180)', check: function (v) { return v === true  }},
+				{ color:'rgb(220,180,180)', check: function (v) { return v === false }},
+
+				{ color:'rgb(200,255,  0)', check: function (v) { return ((typeof v) == 'number') && (v !== 0) && (toString(v) !== 'NaN') && (v !== Infinity) && (v !== -Infinity) }},
+				{ color:'rgb(255,255,  0)', check: function (v) { return v === 0 }},
+				{ color:'rgb(255,200,  0)', check: function (v) { return (v === Infinity) || (v === -Infinity) }},
+
+				{ color:'rgb(255,100,100)', check: function (v) { return (toString(v) == 'NaN') }},
+				{ color:'rgb(255,  0,  0)', check: function (v) { return v === null }},
+				{ color:'rgb(200,  0,  0)', check: function (v) { return v === undefined }},
+				{ color:'rgb(100,100,255)', check: function (v) { return (typeof v == 'string') }},
+				{ color:'rgb(200,255,255)', check: function (v) { return v && (typeof v == 'object') && !(v instanceof Array) }},
+				{ color:'rgb(255,200,255)', check: function (v) { return v && (typeof v == 'object') && (v instanceof Array) }},
+				{ color:'rgb(100,255,100)', check: function (v) { return (typeof v == 'function') }}
+			]
+
+			var operators = [
+				{ label: 'A == B',  call: function (a,b) { return a==b  } },
+				{ label: 'A === B', call: function (a,b) { return a===b } },
+				{ label: 'A & B',   call: function (a,b) { return a&b   } },
+				{ label: 'A && B',  call: function (a,b) { return a&&b  } },
+				{ label: 'A | B',   call: function (a,b) { return a|b   } },
+				{ label: 'A || B',  call: function (a,b) { return a||b  } },
+				{ label: 'A < B',   call: function (a,b) { return a<b   } },
+				{ label: 'A + B',   call: function (a,b) { return a+b   } },
+				{ label: 'A - B',   call: function (a,b) { return a-b   } },
+				{ label: 'A * B',   call: function (a,b) { return a*b   } },
+				{ label: 'A / B',   call: function (a,b) { return a/b   } },
+				{ label: 'A % B',   call: function (a,b) { return a%b   } },
+				{ label: '++A',     call: function (a) { return ++a     }, singular:true },
+				{ label: '!A',      call: function (a) { return !a      }, singular:true },
+			]
+
+			function toString(v) {
+				if (v === undefined) return 'undefined';
+				if ((v === null) && (v == null)) return 'null';
+				if (typeof v == 'string') return '"'+v+'"';
+				return v.toString();
+			}
+		</script>
+		<style type="text/css">
+			body {
+				font-family: 'Tahoma';
+				font-size: 10px;
+			}
+			h1 {
+				font-size: 48px;
+				text-align: center;
+				margin-top: 50px;
+			}
+			h2 {
+				font-size: 36px;
+				text-align: center;
+				margin-top: 100px;
+			}
+			th, td {
+				text-align: center;
+				margin: 0;
+				padding: 3px 6px;
+				border-top: 1px solid #000;
+				border-left: 1px solid #000;
+				width: 65px;
+			}
+			table {
+				border-collapse: collapse;
+				margin: auto;
+				margin-bottom: 50px;
+			}
+			table tr:first-child th {
+				border-bottom: 3px solid #000;
+				border-top: none;
+			}
+			table tr th:first-child {
+				border-right: 3px solid #000;
+				border-left: none;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>"WTF" prevention cheat sheet for JavaScript</h1>
+		<script type="text/javascript">
+			function style(v) {
+				var types = dataTypes.filter(function (var3) { return var3.check(v) });
+				var color = '#888';
+				if (types.length < 1) console.error('Unknown type "'+JSON.stringify(v)+'"', v);
+				if (types.length > 1) console.error('Too many types "'+JSON.stringify(v)+'": ', types);
+				if (types.length == 1) color = types[0].color;
+				return 'style="background:'+color+'"';
+			}
+
+			function resultText(v) {
+				var resultText = JSON.stringify(v);
+				if (typeof v == 'function') resultText = 'function';
+				if (resultText == 'null') resultText = toString(v);
+				return resultText;
+			}
+
+			operators.forEach(function (operator) {
+				document.write('<h2>'+operator.label+'</h2>');
+				document.write('<table>');
+				
+				if (operator.singular) {
+					document.write('<tr><th>'+operator.label+'&rarr;</th>');
+				} else {
+					document.write('<tr><th>&darr;'+operator.label+'&rarr;</th>');
+				}
+
+				variables.forEach(function (var1) {
+					document.write('<th '+style(var1.value)+'>'+var1.label+'</th>');
+				})
+				document.write('</tr>');
+				
+				if (operator.singular) {
+					document.write('<tr><th></th>');
+				}
+
+				variables.forEach(function (var1) {
+					if (operator.singular) {
+						var result = operator.call(var1.value);
+						document.write('<td '+style(result)+'>'+resultText(result)+'</td>');
+					} else {
+						document.write('<tr><th '+style(var1.value)+'>'+var1.label+'</th>');
+						variables.forEach(function (var2) {
+							var result = operator.call(var1.value, var2.value);
+							document.write('<td '+style(result)+'>'+resultText(result)+'</td>');
+						});
+						document.write('</tr>');
+					}
+				})
+				
+				if (operator.singular) {
+					document.write('</tr>');
+				}
+				document.write('</table>');
+			})
+		</script>
+	</body>
+</html>
