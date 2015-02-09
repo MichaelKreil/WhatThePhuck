@@ -3,19 +3,19 @@
 	<head>
 		<script type="text/javascript">
 			var variables = [
-				{ label: 'false',     value: false          },
-				{ label: 'true',      value: true           },
-				{ label: '0',         value: 0              },
-				{ label: '1',         value: 1              },
-				{ label: 'Infinity',  value: Infinity       },
-				{ label: '"A"',       value: "A"            },
-				{ label: 'NaN',       value: NaN            },
-				{ label: 'null',      value: null           },
-				{ label: 'undefined', value: undefined      },
-				{ label: '{}',        value: {}             },
-				{ label: '[]',        value: []             },
-				{ label: '[false]',   value: [false]        },
-				{ label: 'function',  value: function () {} }
+				{ label: 'false',     value1: false,          value2: false          },
+				{ label: 'true',      value1: true,           value2: true           },
+				{ label: '0',         value1: 0,              value2: 0              },
+				{ label: '1',         value1: 1,              value2: 1              },
+				{ label: 'Infinity',  value1: Infinity,       value2: Infinity       },
+				{ label: '"A"',       value1: "A",            value2: "A"            },
+				{ label: 'NaN',       value1: NaN,            value2: NaN            },
+				{ label: 'null',      value1: null,           value2: null           },
+				{ label: 'undefined', value1: undefined,      value2: undefined      },
+				{ label: '{}',        value1: {},             value2: {}             },
+				{ label: '[]',        value1: [],             value2: []             },
+				{ label: '[false]',   value1: [false],        value2: [false]        },
+				{ label: 'function',  value1: function () {}, value2: function () {} }
 			];
 
 			var dataTypes = [
@@ -127,7 +127,7 @@
 				}
 
 				variables.forEach(function (var1) {
-					document.write('<th '+style(var1.value)+'>'+var1.label+'</th>');
+					document.write('<th '+style(var1.value1)+'>'+var1.label+'</th>');
 				})
 				document.write('</tr>');
 				
@@ -137,12 +137,12 @@
 
 				variables.forEach(function (var1) {
 					if (operator.singular) {
-						var result = operator.call(var1.value);
+						var result = operator.call(var1.value1);
 						document.write('<td '+style(result)+'>'+resultText(result)+'</td>');
 					} else {
-						document.write('<tr><th '+style(var1.value)+'>'+var1.label+'</th>');
+						document.write('<tr><th '+style(var1.value1)+'>'+var1.label+'</th>');
 						variables.forEach(function (var2) {
-							var result = operator.call(var1.value, var2.value);
+							var result = operator.call(var1.value1, var2.value2);
 							document.write('<td '+style(result)+'>'+resultText(result)+'</td>');
 						});
 						document.write('</tr>');
